@@ -53,7 +53,7 @@ export function WaitingRoom({ code, email }: WaitingRoomProps) {
         setStatus("connected")
   
         setTimeout(() => {
-          window.location.href = `https://apimeet.imnd.com.br/j/${code}?email=${email}`
+          window.location.href = `/j/${code}?email=${email}`
         }, 1000)
       }, 1500)
     }
@@ -63,7 +63,7 @@ export function WaitingRoom({ code, email }: WaitingRoomProps) {
       if (isConnected) return // se WS ativo, não precisa
   
       try {
-        const res = await fetch(`https://SEU_BACKEND/meeting/status/${code}`)
+        const res = await fetch(`https://apimeet.imnd.com.br/meeting/status/${code}`)
         const data = await res.json()
   
         if (data.moderatorJoined) {
