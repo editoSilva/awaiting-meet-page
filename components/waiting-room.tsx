@@ -45,15 +45,15 @@ export function WaitingRoom({ code, email }: WaitingRoomProps) {
     //FUNÇÃO DE REDIRECT
     const handleRedirect = () => {
       setStatus("connecting")
-  
+    
       const audio = new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg")
       audio.play().catch(() => {})
-  
+    
       setTimeout(() => {
         setStatus("connected")
-  
+    
         setTimeout(() => {
-           `https://apimeet.imnd.com.br/j/${code}?email=${email}`
+          window.location.href = `https://apimeet.imnd.com.br/j/${code}?email=${email}`
         }, 1000)
       }, 1500)
     }
