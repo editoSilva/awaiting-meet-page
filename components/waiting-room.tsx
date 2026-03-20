@@ -53,7 +53,7 @@ export function WaitingRoom({ code, email }: WaitingRoomProps) {
         setStatus("connected")
   
         setTimeout(() => {
-          window.location.href = `/j/${code}?email=${email}`
+           `https://apimeet.imnd.com.br/j/${code}?email=${email}`
         }, 1000)
       }, 1500)
     }
