@@ -13,36 +13,71 @@ export function WaitingRoom({ code, email }: WaitingRoomProps) {
   const [dots, setDots] = useState("")
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setDots((prev) => (prev.length >= 3 ? "" : prev + "."))
-    }, 500)
-    return () => clearInterval(interval)
-  }, [])
-
-  useEffect(() => {
-    if (!code) return
-
+    if (!code || !email) return
+  
+    let isConnected = false
+  
+    //WEBSOCKET
     const ws = new WebSocket(`wss://SEU_DOMINIO/ws/${code}`)
-
+  
+    ws.onopen = () => {
+      console.log("WS conectado")
+      isConnected = true
+    }
+  
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data)
-
+  
       if (data.event === "MODERATOR_JOINED") {
-        setStatus("connecting")
-
-        const audio = new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg")
-        audio.play().catch(() => {})
-
-        setTimeout(() => {
-          setStatus("connected")
-          setTimeout(() => {
-            window.location.href = `/j/${code}?email=${email}`
-          }, 1000)
-        }, 1500)
+        handleRedirect()
       }
     }
-
-    return () => ws.close()
+  
+    ws.onerror = () => {
+      console.log("Erro WS → fallback para polling")
+      isConnected = false
+    }
+  
+    ws.onclose = () => {
+      isConnected = false
+    }
+  
+    //FUNÇÃO DE REDIRECT
+    const handleRedirect = () => {
+      setStatus("connecting")
+  
+      const audio = new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg")
+      audio.play().catch(() => {})
+  
+      setTimeout(() => {
+        setStatus("connected")
+  
+        setTimeout(() => {
+          window.location.href = `https://apimeet.imnd.com.br/j/${code}?email=${email}`
+        }, 1000)
+      }, 1500)
+    }
+  
+    // POLLING (FALLBACK)
+    const interval = setInterval(async () => {
+      if (isConnected) return // se WS ativo, não precisa
+  
+      try {
+        const res = await fetch(`https://SEU_BACKEND/meeting/status/${code}`)
+        const data = await res.json()
+  
+        if (data.moderatorJoined) {
+          handleRedirect()
+        }
+      } catch (err) {
+        console.log("Erro polling", err)
+      }
+    }, 3000)
+  
+    return () => {
+      ws.close()
+      clearInterval(interval)
+    }
   }, [code, email])
 
   const statusMessages = {
