@@ -26,7 +26,7 @@ export default function Page({
     setLoaded(true)
   }, [])
 
-  alert(url)
+  alert(code)
 
   if (!loaded || !code) {
     return (
