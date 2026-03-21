@@ -8,7 +8,8 @@ function WaitingRoomContent() {
   const searchParams = useSearchParams()
   const code = searchParams.get("code") ?? undefined
   const email = searchParams.get("email") ?? undefined
-  console.log("Página carregada", email)
+  console.log("Email", email)
+  console.log("Code", code)
   return <WaitingRoom code={code} email={email} />
 }
 
