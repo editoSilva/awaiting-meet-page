@@ -1,32 +1,31 @@
 "use client"
 
-import { useSearchParams } from "next/navigation"
-import { Suspense, useEffect } from "react"
+import { useEffect, useState } from "react"
 import { WaitingRoom } from "@/components/waiting-room"
 
-function WaitingRoomContent() {
-  const searchParams = useSearchParams()
-  const code = searchParams.get("code") ?? undefined
-  const email = searchParams.get("email") ?? undefined
-  console.log("Email", email)
-  console.log("Code", code)
-  return <WaitingRoom code={code} email={email} />
-}
-
-useEffect(() => {
-  alert(window.location.href)
-}, [])
-
 export default function Page() {
-  return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen bg-background flex items-center justify-center">
-          <div className="w-10 h-10 rounded-full border-4 border-transparent border-t-primary animate-spin" />
-        </div>
-      }
-    >
-      <WaitingRoomContent />
-    </Suspense>
-  )
+  const [code, setCode] = useState<string | undefined>()
+  const [email, setEmail] = useState<string | undefined>()
+  const [loaded, setLoaded] = useState(false)
+
+  useEffect(() => {
+    const url = new URL(window.location.href)
+
+    alert(url.href) // debug mobile
+
+    setCode(url.searchParams.get("code") ?? undefined)
+    setEmail(url.searchParams.get("email") ?? undefined)
+
+    setLoaded(true)
+  }, [])
+
+  if (!loaded || !code) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        Carregando...
+      </div>
+    )
+  }
+
+  return <WaitingRoom code={code} email={email} />
 }
