@@ -1,40 +1,29 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useSearchParams } from "next/navigation"
+import { Suspense } from "react"
 import { WaitingRoom } from "@/components/waiting-room"
-import { url } from "inspector";
 
-export default function Page({
-  searchParams,
-}: {
-  searchParams: { code?: string; email?: string }
-}) {
-  const [code, setCode] = useState<string | undefined>(searchParams.code)
-  const [email, setEmail] = useState<string | undefined>(searchParams.email)
-  const [loaded, setLoaded] = useState(false)
-
-  useEffect(() => {
-    // 🔥 fallback REAL para mobile
-    const url = new URL(window.location.href)
-
-    const c = url.searchParams.get("code")
-    const e = url.searchParams.get("email")
-
-    if (c) setCode(c)
-    if (e) setEmail(e)
-
-    setLoaded(true)
-  }, [])
-
-  console.log(code)
-
-  if (!loaded || !code) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        Carregando...
-      </div>
-    )
-  }
-
+function WaitingRoomContent() {
+  const searchParams = useSearchParams()
+  const code = searchParams.get("code") ?? undefined
+  const email = searchParams.get("email") ?? undefined
+  console.log("Página carregada", email)
   return <WaitingRoom code={code} email={email} />
+}
+
+
+
+export default function Page() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-background flex items-center justify-center">
+          <div className="w-10 h-10 rounded-full border-4 border-transparent border-t-primary animate-spin" />
+        </div>
+      }
+    >
+      <WaitingRoomContent />
+    </Suspense>
+  )
 }
