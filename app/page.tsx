@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { WaitingRoom } from "@/components/waiting-room"
+import { url } from "inspector";
 
 export default function Page({
   searchParams,
@@ -24,6 +25,8 @@ export default function Page({
 
     setLoaded(true)
   }, [])
+
+  alert(url)
 
   if (!loaded || !code) {
     return (
