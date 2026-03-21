@@ -1,7 +1,7 @@
 "use client"
 
 import { useSearchParams } from "next/navigation"
-import { Suspense } from "react"
+import { Suspense, useEffect } from "react"
 import { WaitingRoom } from "@/components/waiting-room"
 
 function WaitingRoomContent() {
@@ -13,7 +13,9 @@ function WaitingRoomContent() {
   return <WaitingRoom code={code} email={email} />
 }
 
-
+useEffect(() => {
+  alert(window.location.href)
+}, [])
 
 export default function Page() {
   return (
