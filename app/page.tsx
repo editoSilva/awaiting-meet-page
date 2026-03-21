@@ -26,7 +26,7 @@ export default function Page({
     setLoaded(true)
   }, [])
 
-  alert(code)
+  console.log(code)
 
   if (!loaded || !code) {
     return (
